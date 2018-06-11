@@ -6,6 +6,7 @@ Library     Selenium2Library
 Open chrome
     [Tags]    chrome
     open browser     http://www.baidu.com     chrome
+    Sleep    10
     close browser
 
 *** Keywords ***

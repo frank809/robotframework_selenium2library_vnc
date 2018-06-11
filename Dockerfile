@@ -25,7 +25,6 @@ RUN ln -s /usr/lib/chromium-browser/chromedriver /usr/bin/ && \
     chmod +x /startup.sh && \
     useradd -m robot
 
+WORKDIR /home/robot
 USER robot
 CMD ["/startup.sh"]
-
-USER root
