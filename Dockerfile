@@ -2,8 +2,12 @@ FROM ubuntu:16.04
 
 MAINTAINER Frank liu "frank.cd.liu@gmail.com"
 
+
+WORKDIR /
+
 RUN apt-get update && \
-    apt-get install -y xubuntu-desktop chromium-browser chromium-chromedriver vnc4server python-pip && \
+    DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y --force-yes xubuntu-desktop && \
+    apt-get install -y chromium-browser chromium-chromedriver vnc4server python-pip openssh-server && \
     apt-get clean && \
     apt-get autoclean && \
     apt-get autoremove -y && \
@@ -11,14 +15,17 @@ RUN apt-get update && \
     rm -rf /tmp/* /var/tmp/* && \
     rm -rf /var/lib/apt/lists/*
 
-RUN pip install robotframework robotframework-Selenium2Library
+RUN pip install robotframework robotframework-Selenium2Library robotframework-sshlibrary robotframework-selenium2screenshots
+
+#for VNC use password password
 
 # Define default command.
-RUN echo '#!/bin/bash' > /startup.sh && \
-    echo "USER=root" >> /startup.sh && \
-    echo "HOME=/root" >> /startup.sh && \
-    echo "DISPLAY=:1.0" >> /startup.sh && \
-    echo "export USER HOME DISPLAY" >> /startup.sh && \
-    echo "vncserver :1" >> /startup.sh && \
-    echo "bash" >> /startup.sh && chmod +x /startup.sh
+COPY ./startup.sh /startup.sh
+RUN ln -s /usr/lib/chromium-browser/chromedriver /usr/bin/ && \
+    chmod +x /startup.sh && \
+    useradd -m robot
+
+USER robot
 CMD ["/startup.sh"]
+
+USER root
